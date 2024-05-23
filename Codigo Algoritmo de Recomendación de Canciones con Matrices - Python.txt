@@ -1,0 +1,141 @@
+import numpy as np
+import random
+
+# Función para leer una matriz de tamaño n x m desde la consola
+def leer_matriz(n, m):
+    matriz = []
+    for i in range(n):
+        fila = list(map(int, input(f"Ingrese los valores de la fila {i + 1} separados por espacios: ").split()))
+        while len(fila) != m:
+            print(f"Debe ingresar exactamente {m} valores.")
+            fila = list(map(int, input(f"Ingrese los valores de la fila {i + 1} separados por espacios: ").split()))
+        matriz.append(fila)
+    return np.array(matriz)
+
+
+# Lista de 15 canciones
+canciones = [
+    "Bohemian Rhapsody - Queen", "Le Freak - Chic", "Cross Road Blues - Robert Johnson", "Bad Boys - Inner Circle", "Enter Sandman- Metallica",
+    "Strobe - Deadmau5", "Blitzkrieg Bop - Ramones", "Stayin' Alive - Bee Gees", "A Change Is Gonna Come - Sam Cooke", "The Gambler - Kenny Rogers",
+    "Painkiller - Judas Priest", "No Woman, No Cry- Bob Marley & The Wailers", "Thriller - Michael Jackson", "The Four Seasons: Spring - Antonio Vivaldi", "Shape of You - Ed Sheeran",
+    "Redemption Song - Bob Marley","One More Time- Daft Punk", "Jolene - Dolly Parton", "What a Wonderful World - Louis Armstrong", "Respect - Aretha Franklin",
+    "Like a Prayer – Madonna", "Anarchy in the U.K. - Sex Pistols", "Lose Yourself - Eminem", "Let's Stay Together- Al Green", "Mi Mayor Venganza - La India",
+    "Sandstorm - Darude", "Stairway to Heaven - Led Zeppelin", "La Diferencia- Juan Gabriel", "Hoochie Coochie Man - Muddy Waters", "Propuesta Indecente- Romeo Santos",
+    "Take Five - Dave Brubeck", "Juicy - The Notorious B.I.G.", "California Love - 2Pac feat. Dr. Dre", "Bachata Rosa - Juan Luis Guerra", "I Will Survive - Gloria Gaynor",
+    "Für Elise - Ludwig van Beethoven","Hotel California - Eagles", "London Calling - The Clash", "Obsesión- Aventura", "Take Me Home, Country Roads - John Denver",
+    "Tarde - Rocío Dúrcal", "Clair de Lune - Claude Debussy", "The Thrill is Gone - B.B. King","Paranoid - Black Sabbath", "So What - Miles Davis"
+
+]
+
+# Lista de 15 géneros musicales
+generos = [
+    "Rock", "Pop", "Jazz", "Bachata", "Reggae", "Clásica", "Hip-Hop", "Electrónica", "Reggueton",
+    "Metal", "Indie", "Para Planchar", "Punk", "Dance", "Soul"
+]
+
+# Pedir el tamaño de las matrices
+n = int(input("Ingrese el número de filas de la matriz U: "))
+m = int(input("Ingrese el número de columnas de la matriz U: "))
+
+print("\n--------------------------------------------------------------------------------")
+
+# Verificar que haya suficientes géneros y canciones para el tamaño de la matriz
+if m > len(generos):
+    raise ValueError("No hay suficientes géneros para asignar a cada columna de la matriz.")
+if n > len(canciones):
+    raise ValueError("No hay suficientes canciones para asignar a cada fila de la matriz.")
+
+# Asignar géneros musicales aleatoriamente a las columnas de A y B sin repetición
+generos_asignados = random.sample(generos, k=m)
+print("\nGéneros asignados a las columnas de U y P:")
+for i, genero in enumerate(generos_asignados):
+    print(f"Columna {i + 1}: {genero}")
+
+# Leer los valores de la matriz U desde la consola
+print("\nIngrese los valores de la matriz U:")
+A = leer_matriz(n, m)
+
+print("\n--------------------------------------------------------------------------------")
+
+print("\nPreferencias de los Usuarios - Matriz U:")
+print(A)
+
+print("\n--------------------------------------------------------------------------------")
+
+# Crear la matriz B con valores aleatorios del mismo tamaño que A
+B = np.random.randint(1, 5, size=(n, m))
+
+print("\nPopularidad Semanal de Canciones - Matriz P:")
+print(B)
+
+# Asignar nombres de canciones a las filas de P sin repetición
+canciones_asignadas = random.sample(canciones, n)
+print("\nCanciones asignadas a las filas de P:")
+for i, cancion in enumerate(canciones_asignadas):
+    print(f"Fila {i + 1}: {cancion}")
+
+print("\n--------------------------------------------------------------------------------")
+
+# Transponer la matriz B
+B_T = B.T
+
+print("\nMatriz P transpuesta:")
+print(B_T)
+
+# Asignar canciones a las columnas de B_T
+print("\nCanciones asignadas a las columnas de P_T:")
+for i, cancion in enumerate(canciones_asignadas):
+    print(f"Columna {i + 1}: {cancion}")
+
+print("\n--------------------------------------------------------------------------------")
+
+# Multiplicar la matriz A por la transpuesta de la matriz B
+C = np.dot(A, B_T)
+print("\nProducto de U y P_T:")
+print(C)
+
+print("\n--------------------------------------------------------------------------------")
+
+# Aplicar la condición a la matriz R
+C = np.where(C < 20, 1, 0)
+
+# Crear la matriz D llena de ceros
+D = np.ones_like(C)
+
+# Asignar las canciones a las columnas de C, D y E
+columnas_canciones = {i: cancion for i, cancion in enumerate(canciones_asignadas)}
+
+print("\nProducto para Recomendaciones - Matriz R:")
+print(C)
+
+# Mostrar canciones asignadas después de imprimir cada matriz
+print("\nCanciones asignadas a las columnas de la matriz R :")
+for i, cancion in columnas_canciones.items():
+    print(f"Columna {i + 1}: {cancion}")
+
+print("\n--------------------------------------------------------------------------------")
+
+print("\nMatriz para calcular no Recomendadas:")
+print(D)
+
+print("\nCanciones asignadas a las columnas de la Matriz para calcular no recomendados:")
+for i, cancion in columnas_canciones.items():
+    print(f"Columna {i + 1}: {cancion}")
+
+print("\n--------------------------------------------------------------------------------")
+# Restar la matriz C de la matriz D
+E = D - C
+print("\nMatriz resultante para no recomendados:")
+print(E)
+
+# Recomendaciones basadas en la matriz E
+for i in range(n):
+    recomendadas = []
+    no_recomendadas = []
+    for j in range(m):
+        if E[i, j] == 1:
+            no_recomendadas.append(columnas_canciones[j])
+        else:
+            recomendadas.append(columnas_canciones[j])
+    print(f"\nCanciones recomendadas al usuario {i + 1}: {', '.join(recomendadas)}")
+    print(f"Canciones no recomendadas al usuario {i + 1}: {', '.join(no_recomendadas)}")
